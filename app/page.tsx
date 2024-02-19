@@ -1,13 +1,14 @@
 import Image from "next/image";
 import { PT_Serif, Roboto } from "next/font/google";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const ptSerif = PT_Serif({ weight: ["700"], subsets: ["latin"] });
 const roboto = Roboto({ weight: ["400"], subsets: ["latin"] });
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-blue-400">
+    <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <section className="flex items-center justify-between w-2/3">
         <section>
           <h1
@@ -23,12 +24,13 @@ export default function Home() {
             <li>Have all your PDF books in one place.</li>
           </ul>
 
-          <Button className="mt-10 px-12 py-6">Let&apos;s get started</Button>
+          <Button className="mt-10 px-12 py-6" variant="secondary">
+            <Link href="/books">View Books</Link>
+          </Button>
         </section>
         <Image
           src="/landing_v2.svg"
           alt="Landing illustration"
-          // className="dark:invert"
           width={500}
           height={200}
           priority
