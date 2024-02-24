@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { PT_Serif } from "next/font/google";
-import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import axios from "axios";
 import { getServerSession } from "next-auth";
@@ -43,24 +42,31 @@ export default async function Home() {
     return { id: d.id, name: d.name };
   });
 
+  const removeFileExtension = (fileName: string) => {
+    const lastDotIndex = fileName.lastIndexOf(".");
+    if (lastDotIndex === -1) return fileName;
+
+    return fileName.substring(0, lastDotIndex);
+  };
+
   return (
-    <main className="flex min-h-screen flex-col justify-start items-center p-4 lg:p-24">
+    <main className="flex min-h-screen flex-col justify-start items-center p-4 md:p-24">
       <section className="flex flex-col w-full lg:w-3/4">
         <h1
-          className={`text-4xl lg:text-6xl text-gray-400 font-bold text-center mt-12 lg:mt-0 ${ptSerif.className}`}
+          className={`text-4xl md:text-6xl text-gray-400 font-bold text-center mt-12 lg:mt-0 ${ptSerif.className}`}
         >
           My Books
         </h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
           {books.map((book) => {
             return (
               <div
-                className="rounded-3xl p-9 lg:p-12 bg-gray-100 text-slate-900 flex flex-col items-center justify-center text-center"
+                className="rounded-xl p-9 lg:p-12 bg-gray-100 text-slate-900 flex flex-col items-center justify-center text-center"
                 key={book.id}
               >
-                <h1 className={`font-black text-2xl ${ptSerif.className}`}>
-                  {book.name}
+                <h1 className={`font-black text-2xl `}>
+                  {removeFileExtension(book.name)}
                 </h1>
 
                 <Button className="mt-6">
