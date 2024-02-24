@@ -25,7 +25,7 @@ export default function Home() {
           </ul>
 
           <Button className="mt-10 px-12 py-6" variant="secondary">
-            <Link href="/books">View Books</Link>
+            <Link href="/books">View My Books</Link>
           </Button>
         </section>
         <Image
