@@ -10,37 +10,10 @@ const ptSerif = PT_Serif({ weight: ["700"], subsets: ["latin"] });
 export default async function Home() {
   const { accessToken } = (await getServerSession(authOptions))!;
 
-  const folderQuery = encodeURIComponent(
-    `name='books' and mimeType='application/vnd.google-apps.folder'`
-  );
-
-  const folderResponse = await axios.get(
-    `https://www.googleapis.com/drive/v3/files?q=${folderQuery}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
-
-  const folderId = folderResponse.data.files[0].id;
-
-  const filesQuery = encodeURIComponent(`'${folderId}' in parents`);
-  const filesResponse = await axios.get(
-    `https://www.googleapis.com/drive/v3/files?q=${filesQuery}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
-
-  const responseData: { files: { id: string; name: string }[] } =
-    filesResponse.data;
-
-  const books = responseData.files.map((d) => {
-    return { id: d.id, name: d.name };
-  });
+  let books: {
+    id: string;
+    name: string;
+  }[] = [];
 
   const removeFileExtension = (fileName: string) => {
     const lastDotIndex = fileName.lastIndexOf(".");
@@ -48,6 +21,43 @@ export default async function Home() {
 
     return fileName.substring(0, lastDotIndex);
   };
+
+  const folderQuery = encodeURIComponent(
+    `name='books' and mimeType='application/vnd.google-apps.folder'`
+  );
+
+  try {
+    const folderResponse = await axios.get(
+      `https://www.googleapis.com/drive/v3/files?q=${folderQuery}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    const folderId = folderResponse.data.files[0].id;
+
+    const filesQuery = encodeURIComponent(`'${folderId}' in parents`);
+    const filesResponse = await axios.get(
+      `https://www.googleapis.com/drive/v3/files?q=${filesQuery}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    const responseData: { files: { id: string; name: string }[] } =
+      filesResponse.data;
+
+    books = responseData.files.map((d) => {
+      return { id: d.id, name: d.name };
+    });
+  } catch (error: any) {
+    if (error.response.status === 401) {
+    }
+  }
 
   return (
     <main className="flex min-h-screen flex-col justify-start items-center p-4 md:p-24">

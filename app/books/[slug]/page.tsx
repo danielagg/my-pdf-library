@@ -1,14 +1,59 @@
 "use client";
 
 import { pdfjs, Document, Page } from "react-pdf";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PDFDocumentProxy } from "pdfjs-dist";
+import { useSession } from "next-auth/react";
+import axios from "axios";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
-export default function BookPage() {
+export default function BookPage({ params }: { params: { slug: string } }) {
   const [numPages, setNumPages] = useState<number>();
   const currentPageRef = useRef<any>(null);
+  const { data: session, status: sessionStatus } = useSession();
+
+  const [fileUrl, setFileUrl] = useState<string | undefined>();
+
+  useEffect(() => {
+    if (sessionStatus !== "authenticated") return;
+
+    const accessToken = session!.accessToken!;
+
+    const fetchBook = async () => {
+      const url = new URL(
+        `https://www.googleapis.com/drive/v3/files/${params.slug}`
+      );
+      url.searchParams.append("fields", "webContentLink");
+      const response = await axios.get(url.toString(), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const downloadUrl = response.data.webContentLink;
+      console.log(downloadUrl);
+      setFileUrl(`https://cors-anywhere.herokuapp.com/${downloadUrl}`);
+
+      // const fileResponse = await axios.get(downloadUrl, {
+      //   responseType: "blob",
+      //   headers: {
+      //     "Access-Control-Allow-Origin": `*`,
+      //   },
+      // });
+
+      // const blob = new Blob([fileResponse.data], {
+      //   type: fileResponse.headers["content-type"],
+      // });
+      // const filename = response.data.name || "book.pdf";
+    };
+
+    fetchBook();
+  }, [sessionStatus]);
+
+  if (!fileUrl) {
+    return <div>Loading...</div>;
+  }
 
   function onDocumentLoadSuccess({
     numPages: nextNumPages,
@@ -30,7 +75,8 @@ export default function BookPage() {
     <main className="min-w-[100vw] min-h-[100vh] flex flex-col items-center justify-center">
       <Document
         className="border w-2/3 h-[90vh] overflow-y-scroll hidden lg:block"
-        file="/books/01.pdf"
+        // file="/books/01.pdf"
+        file={fileUrl}
         onLoadSuccess={onDocumentLoadSuccess}
         loading=""
       >
@@ -48,21 +94,6 @@ export default function BookPage() {
               renderAnnotationLayer={false}
             />
           </div>
-        ))}
-      </Document>
-      <Document
-        className="border w-full h-[90vh] overflow-y-scroll block lg:hidden"
-        file="/books/pragmatic-programmer.pdf"
-        onLoadSuccess={onDocumentLoadSuccess}
-      >
-        {Array.from(new Array(numPages), (el, index) => (
-          <Page
-            key={`page_${index + 1}`}
-            pageNumber={58}
-            width={600}
-            renderTextLayer={false}
-            renderAnnotationLayer={false}
-          />
         ))}
       </Document>
     </main>

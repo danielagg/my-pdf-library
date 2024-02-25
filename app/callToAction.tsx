@@ -6,7 +6,7 @@ import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 
 export const CallToAction = () => {
-  const { status } = useSession();
+  const { data, status } = useSession();
 
   if (status == "loading") {
     return <></>;
