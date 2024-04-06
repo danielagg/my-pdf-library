@@ -5,53 +5,28 @@ import { useEffect, useRef, useState } from "react";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 import { useSession } from "next-auth/react";
 import axios from "axios";
+import { downloadBook } from "./action";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 export default function BookPage({ params }: { params: { slug: string } }) {
+  const [file, setFile] = useState<string | undefined>();
   const [numPages, setNumPages] = useState<number>();
   const currentPageRef = useRef<any>(null);
   const { data: session, status: sessionStatus } = useSession();
 
-  const [fileUrl, setFileUrl] = useState<string | undefined>();
-
   useEffect(() => {
     if (sessionStatus !== "authenticated") return;
 
-    const accessToken = session!.accessToken!;
+    const fetchBook = async () =>
+      await downloadBook(session.accessToken!, params.slug);
 
-    const fetchBook = async () => {
-      const url = new URL(
-        `https://www.googleapis.com/drive/v3/files/${params.slug}`
-      );
-      url.searchParams.append("fields", "webContentLink");
-      const response = await axios.get(url.toString(), {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      const downloadUrl = response.data.webContentLink;
-      console.log(downloadUrl);
-      setFileUrl(`https://cors-anywhere.herokuapp.com/${downloadUrl}`);
-
-      // const fileResponse = await axios.get(downloadUrl, {
-      //   responseType: "blob",
-      //   headers: {
-      //     "Access-Control-Allow-Origin": `*`,
-      //   },
-      // });
-
-      // const blob = new Blob([fileResponse.data], {
-      //   type: fileResponse.headers["content-type"],
-      // });
-      // const filename = response.data.name || "book.pdf";
-    };
-
-    fetchBook();
+    fetchBook().then((data) => {
+      setFile(data);
+    });
   }, [sessionStatus]);
 
-  if (!fileUrl) {
+  if (!file) {
     return <div>Loading...</div>;
   }
 
@@ -75,8 +50,7 @@ export default function BookPage({ params }: { params: { slug: string } }) {
     <main className="min-w-[100vw] min-h-[100vh] flex flex-col items-center justify-center">
       <Document
         className="border w-2/3 h-[90vh] overflow-y-scroll hidden lg:block"
-        // file="/books/01.pdf"
-        file={fileUrl}
+        file={`data:application/pdf;base64,${file}`}
         onLoadSuccess={onDocumentLoadSuccess}
         loading=""
       >
@@ -87,7 +61,6 @@ export default function BookPage({ params }: { params: { slug: string } }) {
           >
             <Page
               pageIndex={index + 1}
-              // pageNumber={pageNumber}
               width={1200}
               loading=""
               renderTextLayer={false}

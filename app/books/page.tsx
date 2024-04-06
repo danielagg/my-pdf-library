@@ -55,8 +55,9 @@ export default async function Home() {
       return { id: d.id, name: d.name };
     });
   } catch (error: any) {
-    if (error.response.status === 401) {
-    }
+    // if (error.response.status === 401) {
+    console.log(error);
+    // }
   }
 
   return (
