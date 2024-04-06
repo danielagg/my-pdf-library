@@ -4,7 +4,6 @@ import { pdfjs, Document, Page } from "react-pdf";
 import { useEffect, useRef, useState } from "react";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 import { useSession } from "next-auth/react";
-import axios from "axios";
 import { downloadBook } from "./action";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -56,7 +55,7 @@ export default function BookPage({ params }: { params: { slug: string } }) {
       >
         {Array.from(new Array(numPages), (el, index) => (
           <div
-            ref={index + 1 == 58 ? currentPageRef : null}
+            ref={index + 1 == 58 ? currentPageRef : null} // todo: we're loading on to page 58 --> we need to keep track of this
             key={`page_${index + 1}`}
           >
             <Page

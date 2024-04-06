@@ -4,6 +4,7 @@ import Link from "next/link";
 import axios from "axios";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
+import Image from "next/image";
 
 const ptSerif = PT_Serif({ weight: ["700"], subsets: ["latin"] });
 
@@ -13,6 +14,7 @@ export default async function Home() {
   let books: {
     id: string;
     name: string;
+    previewLink: string | undefined;
   }[] = [];
 
   const removeFileExtension = (fileName: string) => {
@@ -52,8 +54,21 @@ export default async function Home() {
       filesResponse.data;
 
     books = responseData.files.map((d) => {
-      return { id: d.id, name: d.name };
+      return { id: d.id, name: d.name, previewLink: undefined };
     });
+
+    for (const book of books) {
+      const previewPictureResponse = await axios.get(
+        `https://www.googleapis.com/drive/v3/files/${book.id}?fields=thumbnailLink`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      book.previewLink = previewPictureResponse.data.thumbnailLink;
+    }
   } catch (error: any) {
     // if (error.response.status === 401) {
     console.log(error);
@@ -79,6 +94,15 @@ export default async function Home() {
                 <h1 className={`font-black text-2xl `}>
                   {removeFileExtension(book.name)}
                 </h1>
+
+                {book.previewLink && (
+                  <Image
+                    alt={`Thumbnail of book ${book.name}`}
+                    src={book.previewLink}
+                    width={200}
+                    height={120}
+                  />
+                )}
 
                 <Button className="mt-6">
                   <Link href={`/books/${book.id}`}>Continue Reading</Link>
