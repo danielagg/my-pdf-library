@@ -10,7 +10,7 @@ const roboto = Roboto({ weight: ["400"], subsets: ["latin"] });
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 text-gray-700">
+    <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <SessionProvider>
         <section className="flex items-center justify-between w-2/3">
           <section>
