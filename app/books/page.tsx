@@ -104,8 +104,8 @@ export default async function Home() {
                     <h1 className={`text-xl`}>
                       {removeFileExtension(book.name)}
                     </h1>
-                    <div className="w-1/2 h-2 rounded-full bg-gray-300 mt-3">
-                      <div className="w-1/2 h-2 rounded-full bg-gray-500" />
+                    <div className="w-1/2 h-2 rounded-full bg-gray-200 mt-3">
+                      <div className="w-1/2 h-2 rounded-full bg-gray-900" />
                     </div>
                     <p className="pt-1 text-gray-500 text-sm">
                       Currently on page 58.
