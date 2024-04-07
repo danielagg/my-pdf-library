@@ -70,43 +70,68 @@ export default async function Home() {
       book.previewLink = previewPictureResponse.data.thumbnailLink;
     }
   } catch (error: any) {
-    // if (error.response.status === 401) {
     console.log(error);
-    // }
   }
 
   return (
     <main className="flex min-h-screen flex-col justify-start items-center p-4 md:p-24">
-      <section className="flex flex-col w-full lg:w-3/4">
+      <section className="flex flex-col w-full lg:w-1/2">
         <h1
-          className={`text-4xl md:text-6xl text-gray-400 font-bold text-center mt-12 lg:mt-0 ${ptSerif.className}`}
+          className={`text-4xl md:text-6xl font-bold text-center mt-12 lg:mt-0 ${ptSerif.className}`}
         >
           My Books
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+        <div className="mt-20 space-y-12">
           {books.map((book) => {
             return (
               <div
-                className="rounded-xl p-9 lg:p-12 bg-gray-100 text-slate-900 flex flex-col items-center justify-center text-center"
+                className="bg-gray-200 flex relative w-full min-h-[20vh] rounded-2xl"
                 key={book.id}
               >
-                <h1 className={`font-black text-2xl `}>
-                  {removeFileExtension(book.name)}
-                </h1>
+                {book.previewLink ? (
+                  <div
+                    style={{ backgroundImage: `url(${book.previewLink})` }}
+                    className="w-[150px] h-[200px] rounded-lg absolute top-0 left-0 ml-2 -mt-5 shadow-xl bg-cover bg-center border"
+                  />
+                ) : (
+                  <div className="w-[150px] h-[200px] bg-gray-50 text-gray-200 rounded-lg absolute top-0 left-0 ml-2 -mt-5 shadow-xl border flex items-center justify-center text-3xl">
+                    <h1>?</h1>
+                  </div>
+                )}
 
-                {book.previewLink && (
+                <div className="pl-[175px] w-[85%] min-h-full flex flex-col justify-between py-4">
+                  <div>
+                    <h1 className={`text-xl`}>
+                      {removeFileExtension(book.name)}
+                    </h1>
+                    <div className="w-1/2 h-2 rounded-full bg-gray-300 mt-3">
+                      <div className="w-1/2 h-2 rounded-full bg-gray-500" />
+                    </div>
+                    <p className="pt-1 text-gray-500 text-sm">
+                      Currently on page 58.
+                    </p>
+                  </div>
+
+                  <Button className="w-fit">
+                    <Link href={`/books/${book.id}`}>Continue Reading</Link>
+                  </Button>
+                </div>
+
+                {/* {book.previewLink ? (
                   <Image
                     alt={`Thumbnail of book ${book.name}`}
                     src={book.previewLink}
                     width={200}
                     height={120}
                   />
+                ) : (
+                  <div className="bg-gray-200 w-[200px] h-[200px] rounded-lg" />
                 )}
 
-                <Button className="mt-6">
-                  <Link href={`/books/${book.id}`}>Continue Reading</Link>
-                </Button>
+               
+
+                 */}
               </div>
             );
           })}

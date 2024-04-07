@@ -17,9 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} bg-gradient-to-tl from-black to-slate-800`}
-      >
+      <body className={`bg-gradient-to-tl from-gray-100 to-gray-50`}>
         <NextAuthProvider>{children}</NextAuthProvider>
       </body>
     </html>

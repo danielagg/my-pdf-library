@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { KeySquare } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 
@@ -14,7 +13,7 @@ export const CallToAction = () => {
 
   if (status === "authenticated") {
     return (
-      <Button className="mt-10" variant="secondary">
+      <Button className="mt-10">
         <Link href="/books" className="px-12 py-6">
           View My Books
         </Link>
@@ -25,7 +24,6 @@ export const CallToAction = () => {
   return (
     <Button
       className="mt-10 px-12 py-6 flex items-center space-x-2"
-      variant="secondary"
       onClick={() => signIn("google")}
     >
       <svg
