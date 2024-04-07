@@ -8,6 +8,8 @@ export const authOptions: AuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: {
         params: {
+          access_type: "offline",
+          prompt: "consent",
           scope:
             "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.readonly",
         },
@@ -19,6 +21,7 @@ export const authOptions: AuthOptions = {
     async jwt({ account, token }) {
       if (account?.access_token) {
         token.access_token = account.access_token;
+        token.refresh_token = account.refresh_token;
       }
 
       return token;

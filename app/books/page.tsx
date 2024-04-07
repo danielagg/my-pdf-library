@@ -4,7 +4,6 @@ import Link from "next/link";
 import axios from "axios";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
-import Image from "next/image";
 
 const ptSerif = PT_Serif({ weight: ["700"], subsets: ["latin"] });
 
@@ -86,16 +85,16 @@ export default async function Home() {
           {books.map((book) => {
             return (
               <div
-                className="bg-gray-200 flex relative w-full min-h-[20vh] rounded-2xl"
+                className="bg-white/40 flex relative w-full min-h-[20vh] rounded-2xl border border-blue-100/60"
                 key={book.id}
               >
                 {book.previewLink ? (
                   <div
                     style={{ backgroundImage: `url(${book.previewLink})` }}
-                    className="w-[150px] h-[200px] rounded-lg absolute top-0 left-0 ml-2 -mt-5 shadow-xl bg-cover bg-center border"
+                    className="w-[140px] h-[190px] rounded-lg absolute top-0 left-0 ml-2 -mt-4 shadow-xl bg-cover bg-center border"
                   />
                 ) : (
-                  <div className="w-[150px] h-[200px] bg-gray-50 text-gray-200 rounded-lg absolute top-0 left-0 ml-2 -mt-5 shadow-xl border flex items-center justify-center text-3xl">
+                  <div className="w-[140px] h-[190px] bg-gray-50 text-gray-200 rounded-lg absolute top-0 left-0 ml-2 -mt-4 shadow-xl border flex items-center justify-center text-3xl">
                     <h1>?</h1>
                   </div>
                 )}
@@ -117,21 +116,6 @@ export default async function Home() {
                     <Link href={`/books/${book.id}`}>Continue Reading</Link>
                   </Button>
                 </div>
-
-                {/* {book.previewLink ? (
-                  <Image
-                    alt={`Thumbnail of book ${book.name}`}
-                    src={book.previewLink}
-                    width={200}
-                    height={120}
-                  />
-                ) : (
-                  <div className="bg-gray-200 w-[200px] h-[200px] rounded-lg" />
-                )}
-
-               
-
-                 */}
               </div>
             );
           })}
